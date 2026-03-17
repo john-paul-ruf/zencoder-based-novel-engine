@@ -1,0 +1,734 @@
+# Zencoder-Based Novel Engine
+
+A **multi-agent AI system** for drafting, organizing, editing, and publishing fiction manuscripts. This engine uses Zencoder to orchestrate six specialized AI agents that collaborate through a structured pipeline, transforming a spark of creative inspiration into a polished, publication-ready novel.
+
+---
+
+## Quick Start
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Open this project in your IDE (VS Code or JetBrains)
+
+# 3. Install the Zencoder IDE extension (see below)
+
+# 4. Open the Zencoder chat panel, select an agent, and start writing
+```
+
+> **Note:** This engine is designed and tested for use via the **Zencoder IDE extension**. Running Zencoder from the CLI (`zencoder chat`) is not tested and may not correctly load agents or workspace context.
+
+---
+
+## Prerequisites
+
+Before you begin, you'll need:
+
+- **Node.js** (v18 or higher)
+- **npm** (v9 or higher)
+- **Pandoc** (for PDF/DOCX/EPUB generation): `brew install pandoc`
+- **Zencoder IDE Extension** (see installation below)
+- **A Zencoder account** with Opus 4 access
+
+### Install Zencoder
+
+Zencoder is used via its **IDE extension** — this is the recommended and tested way to run this engine. Install it for your editor:
+
+- **VS Code**: Search for "Zencoder" in the Extensions Marketplace (`Ctrl+Shift+X` / `Cmd+Shift+X`) or install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zencoder.zencoder)
+- **JetBrains IDEs** (WebStorm, IntelliJ, PyCharm, etc.): Search for "Zencoder" in the Plugins Marketplace (`Settings → Plugins`) or install from the [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/zencoder)
+
+After installing, sign in to your Zencoder account from within the IDE. The extension automatically discovers agents and workspace context when you open this project folder.
+
+For full setup instructions, visit the [Zencoder documentation](https://docs.zencoder.ai/).
+
+> **Important:** Do **not** use the Zencoder CLI (`zencoder chat`) with this engine. CLI mode has not been tested with this agent setup and may not load custom agents or workspace files correctly.
+
+---
+
+## Setting Up Your Account
+
+Zencoder manages model access through your account — no manual API key configuration required when using the IDE extension.
+
+1. Sign up or log in at [zencoder.ai](https://zencoder.ai/)
+2. Connect your account in the IDE extension (click the Zencoder icon in your sidebar)
+3. Select **Opus** as your model in the Zencoder chat panel
+
+If you need to connect a personal Anthropic API key instead, you can set it in the Zencoder extension settings within your IDE.
+
+---
+
+## Installing Agents in Zencoder
+
+This project includes **seven custom agents** that live in the `custom-agents/` directory. Each agent is a specialized role in your novel's production pipeline.
+
+### Setting Up Agents
+
+Each agent definition lives in `custom-agents/` as a Markdown file. To use them, you need to **create custom agents in the Zencoder IDE extension** and paste in the instructions from each file:
+
+1. **Open the Zencoder extension** in your IDE (VS Code or JetBrains)
+2. **Create a new custom agent:** Click the ⋮ (three-dot menu) → **Agents** → **Add Custom Agent**
+3. **Configure the agent:**
+   - **Name**: Use the agent name (e.g., "Spark", "Verity", "Ghostlight")
+   - **Instructions**: Copy-paste the full contents of the corresponding `.md` file from `custom-agents/` (e.g., copy `custom-agents/SPARK.md` into the instructions field)
+4. **Repeat** for each of the seven agents listed below
+
+> **Note:** Zen Rules in the `.zencoder/rules/` directory **are** automatically discovered and applied — no manual setup is needed for those. Only the custom agents require manual creation via the IDE extension.
+
+### The Six Agents
+
+| Agent | File | Role | Best For |
+|---|---|---|---|
+| **Spark** | `SPARK.md` | Pitch & Scaffold | Discovering ideas, building pitches, scaffolding projects |
+| **Verity** | `VERITY.md` | Ghostwriter | Writing and revising prose in your voice |
+| **Ghostlight** | `GHOSTLIGHT.md` | First Reader | Cold reads and reader experience feedback |
+| **Lumen** | `LUMEN.md` | Developmental Editor | Structural diagnosis and revision strategy |
+| **Sable** | `SABLE.md` | Copy Editor | Grammar, consistency, and mechanical polish |
+| **Forge** | `FORGE.MD` | Task Master | Synthesizing Lumen/Sable reports into phased revision plans and Verity session prompts |
+| **Quill** | `QUILL.md` | Publisher | Final output audit and publication prep |
+
+Each agent is **context-aware** — it loads only the documents it needs and respects clear boundaries about what it can and cannot modify.
+
+---
+
+## Why Opus?
+
+This system is **optimized for Opus 4** (Claude's most capable model). Here's why:
+
+### Consistency Across Long Conversations
+
+Novel projects require sustained context over many messages. Opus maintains character voice, thematic coherence, and structural awareness across the full arc of development better than smaller models.
+
+### Complex Reasoning
+
+Agents like **Lumen** (developmental editor) need to analyze:
+- Character arc integrity across 80,000+ words
+- Pacing relationships between non-adjacent scenes
+- Thematic echoes woven through the manuscript
+- Contradiction detection across multiple chapters
+
+Only Opus can reliably handle this level of structural reasoning.
+
+### Voice Consistency
+
+**Verity** (the ghostwriter) must internalize the author's voice from the Voice Profile and maintain it throughout an entire manuscript. Opus excels at style transfer and voice consistency.
+
+### Quality of Feedback
+
+**Ghostlight** and **Lumen** provide deep critical feedback that shapes revision strategy. Their insights are only as good as the model's ability to read "between the lines" — to infer intent, emotional impact, and structural problems from prose. Opus reads better.
+
+### Cost-Benefit at Scale
+
+A novel manuscript (80,000–120,000 words) generates substantial API tokens. Opus produces higher-quality output per token, reducing the need for re-runs and revision cycles that would multiply your costs.
+
+**Recommendation:** Start with Opus. You can always use a smaller model for specific agents (e.g., Sable for copy editing) once you understand the system, but the core pipeline (Spark → Verity → Ghostlight → Lumen) should use Opus.
+
+---
+
+## How It All Works
+
+### The Pipeline in 12 Phases
+
+This system guides a manuscript through a structured, sequential pipeline. Each agent runs in its own Zencoder conversation.
+
+```
+Spark (Pitch)
+    ↓
+Verity (First Draft)
+    ↓
+Ghostlight (First Read)
+    ↓
+Lumen (First Assessment)
+    ↓
+Forge (Revision Plan)
+    ↓
+Verity (Revision)
+    ↓
+Ghostlight (Second Read)
+    ↓
+Lumen (Second Assessment)
+    ↓
+Sable (Copy Edit)
+    ↓
+Forge (Revision Plan)
+    ↓
+Verity (Mechanical Fixes)
+    ↓
+Build (node scripts/build.js)
+    ↓
+Quill (Publish & Audit)
+```
+
+### Phase-by-Phase Breakdown
+
+#### Phase 1: Pitch & Scaffold (Spark)
+
+**What:** Explore your story idea, pressure-test it, and build a pitch card. Once approved, Spark scaffolds the entire project.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Spark** from the agent dropdown
+3. Describe your story idea, character, "what if" question, or core premise
+4. Have a conversation: Spark asks clarifying questions, challenges assumptions, and refines the concept
+5. Once you approve: Spark creates `books/<your-book>/` with starter files:
+   - `about.json` (metadata)
+   - `source/voice-profile.md` (seeded)
+   - `source/scene-outline.md` (template)
+   - `source/story-bible.md` (seeded)
+6. Updates `active-book.json` to point at your new project
+
+**Output:** A fully scaffolded project ready for drafting.
+
+#### Phase 2: First Draft (Verity)
+
+**What:** Complete the Voice Profile, populate the Scene Outline, expand the Story Bible, and write the full manuscript.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Verity**
+3. Verity loads your scaffolded project
+4. Chapter by chapter, Verity writes to `chapters/<number>-<slug>/draft.md`
+5. You provide feedback, steer rewrites, add author notes to `chapters/<number>-<slug>/notes.md`
+6. Verity is the **only agent** that writes or modifies `draft.md` files
+
+**Output:** Complete first draft + populated Voice Profile, Scene Outline, Story Bible.
+
+#### Phase 3: First Read (Ghostlight)
+
+**What:** Read the full manuscript cold, the way a real first reader would.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Ghostlight**
+3. Ghostlight reads every chapter and produces `source/reader-report.md`:
+   - Engagement tracking (1–5 per chapter)
+   - Emotional beats and turning points
+   - Confusion points and reader predictions
+   - Character impressions
+   - High and low points
+
+**Output:** Reader report capturing the experiential journey.
+
+#### Phase 4: Structural Assessment (Lumen)
+
+**What:** Diagnose structural strengths and weaknesses across seven lenses.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Lumen**
+3. Lumen reads the manuscript twice (once as reader, once structurally)
+4. Produces `source/dev-report.md`:
+   - Premise/promise analysis
+   - Protagonist arc assessment
+   - Supporting cast dynamics
+   - Pacing and momentum audit
+   - Scene necessity analysis
+   - Thematic coherence
+   - Opening/closing effectiveness
+   - A **revision roadmap** prioritizing changes
+
+**Output:** Developmental report with concrete revision priorities.
+
+#### Phase 5: Revision Planning (Forge)
+
+**What:** Synthesize Lumen's developmental report into a phased revision task list and ready-to-paste session prompts for Verity.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Forge**
+3. Forge reads `source/dev-report.md` (and `source/reader-report.md` if present)
+4. Produces `source/project-tasks.md` — all revision tasks organized into phases with blockers identified
+5. Presents **Phase 0 blockers** (author decisions) — you resolve these before Forge continues
+6. Once decisions are resolved, Forge produces `source/revision-prompts.md` — ready-to-paste session prompts for Verity, batched by chapter, sequenced for structural safety
+
+**Output:** Phased revision task list + ready-to-paste Verity session prompts.
+
+#### Phase 6: Revision (Verity)
+
+**What:** Implement structural changes using Forge's session prompts.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Verity**
+3. Copy-paste session prompts from `source/revision-prompts.md` one at a time
+4. Verity addresses tasks sequentially (never in parallel — changes cascade)
+5. Updates `chapters/*/draft.md`, `source/scene-outline.md`, `source/story-bible.md`
+6. You review and approve each change before Verity proceeds
+
+**Output:** Revised manuscript ready for a second read.
+
+#### Phase 7: Second Read (Ghostlight)
+
+**What:** Read the revised manuscript and compare against the first read.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Ghostlight**
+3. Ghostlight reads the new version and produces a new `source/reader-report.md`
+4. Archives the first report as `source/reader-report-v1.md`
+
+**Output:** Comparison data showing how revisions landed.
+
+#### Phase 8: Second Assessment (Lumen)
+
+**What:** Run the full structural assessment again on the revised manuscript.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Lumen**
+3. Produces a new `source/dev-report.md`
+4. Archives the first report as `source/dev-report-v1.md`
+5. Confirms revisions worked, catches new problems, provides a **readiness assessment**
+
+**Output:** Readiness assessment — is the manuscript ready for copy editing?
+
+#### Phase 9: Copy Edit (Sable)
+
+**What:** Five discrete audits: style consistency, continuity, grammar, word-level issues, formatting.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Sable**
+3. Sable runs audits and produces:
+   - `source/style-sheet.md` (style decisions for consistency)
+   - `source/audit-report.md` (all findings, no modifications)
+4. Sable **never modifies** `draft.md` files — all findings go in the report
+
+**Output:** Audit report listing all copy-level issues.
+
+#### Phase 10: Copy Edit Planning & Fixes (Forge + Verity)
+
+**What:** Synthesize Sable's audit report into a mechanical fix task list and implement the fixes.
+
+**How:**
+1. Open a new Zencoder chat in your IDE, select **Forge**
+2. Forge reads `source/audit-report.md` (and `source/dev-report.md` if present)
+3. Produces updated `source/project-tasks.md` and `source/revision-prompts.md` for all copy-level findings
+4. Open a new Zencoder chat in your IDE, select **Verity**
+5. Copy-paste mechanical fix prompts from `source/revision-prompts.md` one at a time
+6. You approve each fix before Verity proceeds
+
+**Output:** Clean manuscript with all copy-level issues resolved.
+
+#### Phase 11: Build
+
+**What:** Assemble chapters into final outputs.
+
+**How:**
+```bash
+npm run build
+```
+
+This runs `node scripts/build.js <book-folder>` and produces:
+- Markdown (.md)
+- DOCX (Microsoft Word)
+- EPUB (e-reader)
+- PDF
+
+All outputs land in `books/<your-book>/dist/`.
+
+**No agent runs this phase** — it's a manual build step.
+
+#### Phase 12: Publish & Audit (Quill)
+
+**What:** Audit build outputs and prepare publication metadata.
+
+**How:**
+1. Open a new Zencoder chat in your IDE
+2. Select **Quill**
+3. Quill audits every build output (`epub`, `docx`, `pdf`) for:
+   - Formatting errors
+   - Missing chapter breaks
+   - Character encoding issues
+   - Metadata mismatches
+4. If blocking issues found: fix source → rebuild → Quill re-audits
+5. Once clean: Quill produces:
+   - `source/book-description.md` (three variants)
+   - `source/pricing.md` (pricing recommendation)
+   - `source/metadata.md` (BISAC codes, keywords, categories)
+
+**Output:** Publication-ready manuscript + complete metadata package.
+
+---
+
+## Project Structure
+
+```
+zencoder-based-novel-engine/
+├── custom-agents/              ← Agent definitions
+│   ├── SPARK.md               ← Pitch & Scaffold agent
+│   ├── VERITY.md              ← Ghostwriter agent
+│   ├── GHOSTLIGHT.md          ← First Reader agent
+│   ├── LUMEN.md               ← Dev Editor agent
+│   ├── SABLE.md               ← Copy Editor agent
+│   ├── FORGE.MD               ← Task Master agent
+│   └── QUILL.md               ← Publisher agent
+├── .zencoder/                 ← Zencoder configuration
+│   ├── docs/
+│   └── rules/
+├── books/                     ← Your novels live here
+│   ├── _example/              ← Template novel
+│   └── your-book-name/
+│       ├── about.json         ← Title, author, status
+│       ├── source/
+│       │   ├── voice-profile.md       ← Writing voice reference
+│       │   ├── scene-outline.md       ← Scene-by-scene plan
+│       │   ├── story-bible.md         ← Characters, world, continuity
+│       │   ├── reader-report.md       ← Ghostlight's feedback
+│       │   ├── reader-report-v1.md    ← Archived first read
+│       │   ├── dev-report.md          ← Lumen's structural diagnosis
+│       │   ├── dev-report-v1.md       ← Archived first assessment
+│       │   ├── style-sheet.md         ← Sable's style decisions
+│       │   ├── audit-report.md        ← Sable's copy findings
+│       │   ├── project-tasks.md       ← Forge's revision task list
+│       │   ├── revision-prompts.md    ← Forge's ready-to-paste Verity prompts
+│       │   ├── book-description.md    ← Quill's description variants
+│       │   ├── pricing.md             ← Quill's pricing recommendation
+│       │   └── metadata.md            ← Quill's publication metadata
+│       ├── chapters/
+│       │   ├── 01-first-chapter/
+│       │   │   ├── draft.md           ← The actual prose
+│       │   │   └── notes.md           ← Author notes
+│       │   ├── 02-second-chapter/
+│       │   └── ...
+│       ├── assets/
+│       │   └── cover.jpg
+│       └── dist/                      ← Build outputs
+│           ├── output.md
+│           ├── output.docx
+│           ├── output.epub
+│           ├── output.pdf
+│           └── output-audit.md
+├── scripts/
+│   ├── build.js               ← `npm run build` script
+│   └── cover.js               ← `npm run cover` script
+├── active-book.json           ← Pointer to current project
+├── author-profile.md          ← Your creative profile
+├── the-pipeline.md            ← Detailed pipeline reference
+├── TRACKER.md                 ← Progress tracking
+└── package.json               ← Node dependencies
+```
+
+---
+
+## Essential Commands
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Build a Novel
+
+```bash
+npm run build
+```
+
+Builds the active book (from `active-book.json`) to all formats in `dist/`.
+
+To build a specific book:
+
+```bash
+BOOK=your-book-name npm run build
+```
+
+### Check Word Count
+
+```bash
+npm run wordcount
+```
+
+Counts words in all chapters of the active book.
+
+### Generate a Cover
+
+```bash
+npm run cover
+```
+
+Creates a simple cover image (customize `scripts/cover.js` as needed).
+
+### Start a Zencoder Session
+
+Open the Zencoder chat panel in your IDE (click the Zencoder icon in the sidebar). Select your agent from the dropdown and start a conversation.
+
+---
+
+## Key Rules & Best Practices
+
+### One Agent Per Conversation
+
+Select **one agent** in the Zencoder agent dropdown (in the IDE chat panel) and open a new chat for each phase. Don't run two agents in the same conversation thread.
+
+### Sequential, Not Parallel
+
+The pipeline is **strictly ordered**. Each agent's output feeds the next agent's input.
+
+- ❌ Don't skip phases
+- ❌ Don't run agents out of order
+- ✅ Follow Spark → Verity → Ghostlight → Lumen → Forge → Verity → Ghostlight → Lumen → Sable → Forge → Verity → Build → Quill
+
+### Always Ghostlight Before Lumen
+
+Lumen's structural insights are sharper when informed by Ghostlight's experiential data. Reader engagement is evidence for pacing and scene necessity findings.
+
+### Sable Always Before Build
+
+Copy editing before structural work is complete wastes effort. But copy editing **must** be done before the build produces final outputs.
+
+### Quill Always After Build
+
+Quill audits the build outputs (`dist/`), not source files. If the build hasn't run, Quill has nothing to do. If Quill finds blocking issues:
+1. Fix the source
+2. Rebuild (`npm run build`)
+3. Quill re-audits
+
+### Status Tracking in `about.json`
+
+Update the `status` field in `about.json` as you move through phases:
+
+```json
+{
+  "status": "scaffolded"      // Just created
+  // → "outlining"            // Scene outline in progress
+  // → "first-draft"          // Verity writing
+  // → "revision-1"           // Verity revising
+  // → "revision-2"           // More revisions
+  // → "copy-edit"            // Sable's audits complete
+  // → "final"                // Ready for Quill (required!)
+}
+```
+
+**Quill requires `status: "final"` before operating.** It's a safety gate.
+
+### Archive, Never Overwrite
+
+Ghostlight, Lumen, Sable, and Quill all version their reports before writing new ones:
+
+- First run: `reader-report.md`
+- Second run: Archives first as `reader-report-v1.md`, writes new `reader-report.md`
+
+This gives you a **paper trail** across revision cycles.
+
+### The Pointer Is the Project
+
+`active-book.json` determines which book every agent operates on:
+
+```json
+{
+  "book": "my-novel-name"
+}
+```
+
+Swap the pointer, and the entire context shifts. No agent hardcodes a book name — always read from `active-book.json`.
+
+---
+
+## When to Run Agents Multiple Times
+
+| Agent | Typical Runs | When to Run Again |
+|---|---|---|
+| **Spark** | 1 | Mid-project creative reset if you lose sight of the story |
+| **Verity** | 2+ | Once for first draft, once per revision cycle (she's the workhorse) |
+| **Ghostlight** | 2 | After first draft, after major revisions. Diminishing returns beyond 2 |
+| **Lumen** | 2 | After first draft (with reader report), after revisions. Third run only if major issues remain |
+| **Sable** | 1 | After all structural work is done. Second run only if findings trigger significant prose changes |
+| **Forge** | 2 | Once after Lumen's structural assessment, once after Sable's copy edit. Re-run only if Phase 0 decisions significantly change the task scope |
+| **Quill** | 1 | After the build. Second run only if blocking issues required a rebuild |
+
+---
+
+## Troubleshooting
+
+### Agents Not Appearing in Zencoder
+
+1. Verify the `.zencoder/` directory exists
+2. Check that `custom-agents/*.md` files are present
+3. Reload the Zencoder panel or reload your IDE window
+4. If still missing, check the Zencoder extension output log in your IDE (look for "Zencoder" in the Output panel)
+
+### "Cannot find active book" Error
+
+Ensure `active-book.json` exists and points to a valid book folder:
+
+```bash
+cat active-book.json
+ls -la books/<book-name>/
+```
+
+### Build Fails: Missing Pandoc
+
+Install Pandoc to generate DOCX, EPUB, PDF:
+
+```bash
+brew install pandoc
+```
+
+Then try `npm run build` again.
+
+### API Rate Limits or Timeouts
+
+Large manuscripts (80,000+ words) generate significant token usage:
+- **Reduce context**: Run agents on specific chapters before full-manuscript reads
+- **Use smaller models** for Sable (copy edit) and Quill (audit) once you understand the system
+- **Increase timeouts** in Zencoder settings if needed
+
+### Lost Work / File Overwrites
+
+- Agents archive reports before creating new ones (e.g., `dev-report-v1.md`)
+- **Only Verity** modifies `draft.md` files — other agents' changes go in reports
+- **Always commit to git** before major phases (especially Verity revisions)
+
+---
+
+## Tips for Best Results
+
+### 1. Build Strong Source Documents
+
+A strong **Voice Profile**, **Scene Outline**, and **Story Bible** are force multipliers. Spend time on these in Phase 2 — they inform every agent downstream.
+
+### 2. Give Thoughtful Feedback
+
+When agents ask clarifying questions, answer fully. Context = better work.
+
+### 3. Archive Your Git History
+
+Commit after each major phase:
+
+```bash
+git add -A
+git commit -m "Phase 2: First draft complete (45K words)"
+git commit -m "Phase 4: Lumen's structural assessment done"
+```
+
+This gives you recovery points if a revision goes sideways.
+
+### 4. Use `TRACKER.md`
+
+Update [./TRACKER.md](./TRACKER.md) as you move through phases. It's your project dashboard.
+
+### 5. Customize Agent Instructions
+
+Each agent's instructions live in `custom-agents/<AGENT>.md`. You can tweak prompts to match your style:
+
+```bash
+# Edit Verity's voice
+nano custom-agents/VERITY.md
+```
+
+Changes take effect next time you start a chat with that agent.
+
+### 6. Test the Build Early
+
+Run `npm run build` after Phase 2 (first draft). Catch formatting issues before copy editing:
+
+```bash
+npm run build
+# Check dist/ for output formatting
+```
+
+### 7. Use Author Notes Strategically
+
+Author Notes (`chapters/*/notes.md`) are read by Lumen and Sable but **not** Ghostlight. Use them to explain authorial intent without influencing the reader's first impression:
+
+```markdown
+# Notes for Chapter 5
+
+## Intent
+This scene establishes the tension between Maya and Kenji.
+I wanted readers to feel _uncomfortable_, not confused.
+
+## Revision Ideas (from Lumen)
+- Tighten the dialogue (currently 500 words, should be 350)
+- Add a beat where Maya realizes Kenji's fear
+```
+
+---
+
+## Advanced Workflows
+
+### Parallel Processing (Limited)
+
+While the **main pipeline is sequential**, you can speed up some phases:
+
+- **During Verity's first draft**: Run Spark on a _different_ novel concept in parallel (separate `active-book.json` pointer)
+- **During copy editing**: Run Ghostlight on a different manuscript
+- **But never**: Run two agents on the _same_ manuscript in parallel
+
+### Selective Revision
+
+If Lumen's report has 20 priorities but you only want to revise 5:
+
+1. Create a note in `notes.md` listing your chosen 5
+2. Tell Verity which items to prioritize
+3. Run Lumen again to assess just those changes
+
+### Quick Copy Edit Loop
+
+If Sable finds 100 issues:
+
+1. Read `audit-report.md`
+2. Fix high-impact items manually (grammar, major inconsistencies)
+3. Run Verity with specific revision instructions
+4. Run Sable again for a fresh audit
+
+---
+
+## Contributing & Customization
+
+### Customizing an Agent
+
+Each agent is a markdown file in `custom-agents/`. The file contains:
+
+- **System instructions** (what the agent is)
+- **Rules and constraints** (what it can/cannot do)
+- **Input/output specifications** (what documents it loads/creates)
+
+Example: To make Verity more verbose:
+
+1. Edit `custom-agents/VERITY.md` — look for the "Tone & Style" section and adjust the instructions
+2. Open the Zencoder IDE extension → ⋮ (three-dot menu) → **Agents**
+3. Find the **Verity** agent and update its **Instructions** field by pasting the updated contents of `VERITY.md`
+
+### Adding a New Agent
+
+1. Create a new `.md` file in `custom-agents/` following the existing pattern:
+
+   ```markdown
+   # NewAgent
+
+   **Role:** What does this agent do?
+
+   **Capabilities:**
+   - Capability 1
+   - Capability 2
+
+   **Constraints:**
+   - Cannot modify these files
+   - Can only read these inputs
+
+   **Loading:**
+   Load these documents on start...
+
+   **Output:**
+   Produces...
+   ```
+
+2. Open the Zencoder IDE extension → ⋮ (three-dot menu) → **Agents** → **Add Custom Agent**
+3. Set the **Name** to match your agent and paste the `.md` file contents into the **Instructions** field
+4. The new agent will appear in the agent selector dropdown for your next chat
+
+---
+
+## Resources
+
+- **[The Pipeline Deep Dive](./the-pipeline.md)** — Detailed breakdown of all 10 phases, file ownership, and rules
+- **[Author Profile](./author-profile.md)** — Your creative DNA (loaded by Spark and Quill)
+- **[Tracker](./TRACKER.md)** — Real-time project progress
+- **[Zencoder Documentation](https://zencoder.ai/)** — Full Zencoder setup and API docs
+- **[Claude Documentation](https://docs.anthropic.com)** — API keys, rate limits, token counting
+
+---
+
+**Happy writing. 🎭**

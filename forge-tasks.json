@@ -1,0 +1,248 @@
+{
+  "tasks": {
+    "spark-pitch": {
+      "id": "spark-pitch",
+      "phase": 1,
+      "title": "Pitch & Scaffold (Spark)",
+      "agent": "Spark",
+      "description": "Explore story idea, pressure-test it, and scaffold the entire project",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": [],
+      "inputs": [
+        "Story concept or prompt"
+      ],
+      "outputs": [
+        "books/<your-book>/about.json",
+        "books/<your-book>/source/voice-profile.md",
+        "books/<your-book>/source/scene-outline.md",
+        "books/<your-book>/source/story-bible.md",
+        "active-book.json (updated)"
+      ],
+      "notes": "Start here. Spark scaffolds the entire project structure.",
+      "estimatedTime": "1-2 hours",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "verity-first-draft": {
+      "id": "verity-first-draft",
+      "phase": 2,
+      "title": "First Draft (Verity)",
+      "agent": "Verity",
+      "description": "Write the full manuscript chapter by chapter, populating Voice Profile and Story Bible",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": ["spark-pitch"],
+      "inputs": [
+        "books/<your-book>/source/voice-profile.md",
+        "books/<your-book>/source/scene-outline.md",
+        "books/<your-book>/source/story-bible.md"
+      ],
+      "outputs": [
+        "books/<your-book>/chapters/[01-NN]/draft.md",
+        "books/<your-book>/source/voice-profile.md (expanded)",
+        "books/<your-book>/source/scene-outline.md (expanded)",
+        "books/<your-book>/source/story-bible.md (expanded)"
+      ],
+      "notes": "Verity is the only agent that modifies draft.md files.",
+      "estimatedTime": "1-2 weeks",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "ghostlight-first-read": {
+      "id": "ghostlight-first-read",
+      "phase": 3,
+      "title": "First Read (Ghostlight)",
+      "agent": "Ghostlight",
+      "description": "Cold read of the full manuscript as a first reader would experience it",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": ["verity-first-draft"],
+      "inputs": [
+        "books/<your-book>/chapters/*/draft.md"
+      ],
+      "outputs": [
+        "books/<your-book>/source/reader-report.md"
+      ],
+      "notes": "Ghostlight's experiential feedback informs Lumen's structural analysis.",
+      "estimatedTime": "2-3 hours",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "lumen-first-assessment": {
+      "id": "lumen-first-assessment",
+      "phase": 4,
+      "title": "First Assessment (Lumen)",
+      "agent": "Lumen",
+      "description": "Structural diagnosis across 7 lenses: premise, arc, cast, pacing, scenes, theme, openings",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": ["ghostlight-first-read"],
+      "inputs": [
+        "books/<your-book>/chapters/*/draft.md",
+        "books/<your-book>/source/reader-report.md"
+      ],
+      "outputs": [
+        "books/<your-book>/source/dev-report.md",
+        "books/<your-book>/source/revision-roadmap.md"
+      ],
+      "notes": "Always run Ghostlight first. Lumen's insights are sharper with reader data.",
+      "estimatedTime": "2-4 hours",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "verity-revision": {
+      "id": "verity-revision",
+      "phase": 5,
+      "title": "Revision (Verity)",
+      "agent": "Verity",
+      "description": "Implement structural changes based on Lumen's revision roadmap",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": ["lumen-first-assessment"],
+      "inputs": [
+        "books/<your-book>/source/dev-report.md",
+        "books/<your-book>/source/revision-roadmap.md",
+        "books/<your-book>/chapters/*/draft.md"
+      ],
+      "outputs": [
+        "books/<your-book>/chapters/*/draft.md (revised)",
+        "books/<your-book>/source/scene-outline.md (updated)",
+        "books/<your-book>/source/story-bible.md (updated)"
+      ],
+      "notes": "Address Lumen's revision items sequentially. Changes cascade.",
+      "estimatedTime": "3-7 days",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "ghostlight-second-read": {
+      "id": "ghostlight-second-read",
+      "phase": 6,
+      "title": "Second Read (Ghostlight)",
+      "agent": "Ghostlight",
+      "description": "Re-read revised manuscript and compare against first read",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": ["verity-revision"],
+      "inputs": [
+        "books/<your-book>/chapters/*/draft.md"
+      ],
+      "outputs": [
+        "books/<your-book>/source/reader-report.md (new)",
+        "books/<your-book>/source/reader-report-v1.md (archived)"
+      ],
+      "notes": "Archives previous report automatically. Shows revision impact.",
+      "estimatedTime": "2-3 hours",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "lumen-second-assessment": {
+      "id": "lumen-second-assessment",
+      "phase": 7,
+      "title": "Second Assessment (Lumen)",
+      "agent": "Lumen",
+      "description": "Run full structural assessment on revised manuscript, confirm readiness for copy edit",
+      "status": "pending",
+      "priority": "medium",
+      "dependencies": ["ghostlight-second-read"],
+      "inputs": [
+        "books/<your-book>/chapters/*/draft.md",
+        "books/<your-book>/source/reader-report.md"
+      ],
+      "outputs": [
+        "books/<your-book>/source/dev-report.md (new)",
+        "books/<your-book>/source/dev-report-v1.md (archived)",
+        "books/<your-book>/source/readiness-assessment.md"
+      ],
+      "notes": "Archives first assessment. Provides go/no-go for copy editing.",
+      "estimatedTime": "2-4 hours",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "sable-copy-edit": {
+      "id": "sable-copy-edit",
+      "phase": 8,
+      "title": "Copy Edit (Sable)",
+      "agent": "Sable",
+      "description": "Five audits: style, continuity, grammar, word-level, formatting",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": ["lumen-second-assessment"],
+      "inputs": [
+        "books/<your-book>/chapters/*/draft.md"
+      ],
+      "outputs": [
+        "books/<your-book>/source/style-sheet.md",
+        "books/<your-book>/source/audit-report.md"
+      ],
+      "notes": "Sable never modifies draft.md. All findings go in audit-report.md",
+      "estimatedTime": "1-2 days",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "build-outputs": {
+      "id": "build-outputs",
+      "phase": 9,
+      "title": "Build Outputs",
+      "agent": "Manual",
+      "description": "Assemble chapters into final outputs (MD, DOCX, EPUB, PDF)",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": ["sable-copy-edit"],
+      "inputs": [
+        "books/<your-book>/chapters/*/draft.md"
+      ],
+      "outputs": [
+        "books/<your-book>/dist/output.md",
+        "books/<your-book>/dist/output.docx",
+        "books/<your-book>/dist/output.epub",
+        "books/<your-book>/dist/output.pdf"
+      ],
+      "command": "npm run build",
+      "notes": "Run manually: npm run build",
+      "estimatedTime": "15 minutes",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    },
+    "quill-publish": {
+      "id": "quill-publish",
+      "phase": 10,
+      "title": "Publish & Audit (Quill)",
+      "agent": "Quill",
+      "description": "Audit build outputs and prepare publication metadata",
+      "status": "pending",
+      "priority": "high",
+      "dependencies": ["build-outputs"],
+      "inputs": [
+        "books/<your-book>/dist/*"
+      ],
+      "outputs": [
+        "books/<your-book>/source/book-description.md",
+        "books/<your-book>/source/pricing.md",
+        "books/<your-book>/source/metadata.md",
+        "books/<your-book>/source/publication-audit.md"
+      ],
+      "notes": "Requires about.json status: 'final'. Won't run otherwise.",
+      "estimatedTime": "1-2 hours",
+      "createdAt": null,
+      "startedAt": null,
+      "completedAt": null
+    }
+  },
+  "metadata": {
+    "lastUpdated": null,
+    "totalTasks": 10,
+    "completedTasks": 0,
+    "currentWorkflow": "novel-pipeline",
+    "activeBook": null
+  }
+}

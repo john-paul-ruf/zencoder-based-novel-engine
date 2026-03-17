@@ -1,0 +1,20 @@
+{
+  "name": "my-novel-engine",
+  "author": "John Ruf",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "wordcount": "BOOK=${BOOK:-$(node -p \"require('./active-book.json').book\")} && cat books/$BOOK/chapters/[0-9][0-9]-*/draft.md | wc -w",
+    "build": "BOOK=${BOOK:-$(node -p \"require('./active-book.json').book\")} && node scripts/build.js $BOOK",
+    "cover": "BOOK=${BOOK:-$(node -p \"require('./active-book.json').book\")} && node scripts/cover.js $BOOK"
+  },
+  "dependencies": {
+    "auto-pandoc": "^1.1.2",
+    "md-to-pdf": "^5.1.0",
+    "sharp": "^0.33.1"
+  },
+  "devDependencies": {
+    "markdownlint-cli": "^0.40.0",
+    "prettier": "^3.2.5"
+  }
+}
