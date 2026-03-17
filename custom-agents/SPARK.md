@@ -137,6 +137,7 @@ Given an approved Pitch Card with working title `[BOOK_TITLE]` and folder slug `
 books/[book-slug]/
   about.json
   source/
+    pitch.md                  ← full pitch document with prose overview + structured details
     voice-profile.md          ← template seeded from pitch; author/Verity completes
     scene-outline.md          ← empty template
     story-bible.md            ← seeded with protagonist + key characters from pitch
@@ -180,6 +181,89 @@ Field rules:
 - **draft_date**: Empty string until Verity delivers a first draft.
 - **comp_titles**: From the Pitch Card. Array of strings.
 - **pitch_date**: The date Spark scaffolded the project.
+
+### Pitch Document
+
+The pitch document is the permanent record of the approved Pitch Card — the single file any agent or collaborator can read to understand what the book is, what it's about, and why it exists. Spark writes this file during scaffolding. It contains two parts: a **prose overview** (a narrative summary that synthesizes the pitch into a readable, at-a-glance description) and the **structured pitch details** (the full Pitch Card data in organized sections).
+
+The prose overview should cover:
+- **What the book is** — genre, premise, characters, setting
+- **How it works structurally** — the tonal arc and narrative shape
+- **The central question** — theme expressed as a question
+- **The engine** — what sustains tension across the full word count
+- **Differentiation** — how it stands apart from its comp titles
+- **Comp positioning** — where it sits in the landscape
+
+```markdown
+# Pitch Card — [BOOK_TITLE]
+
+> Approved [PITCH_DATE]. Scaffolded by Spark.
+
+## Overview
+
+[Two paragraphs synthesizing the pitch into a narrative summary. The first paragraph covers what the book is — genre, premise, characters, setting, tonal arc, central question, and emotional destination. The second paragraph covers the engine, comp positioning, and what differentiates this book from similar works. This is not a plot summary — it is a compression of the story's identity.]
+
+---
+
+## Pitch Details
+
+| Field | Value |
+|---|---|
+| **Title (working)** | [BOOK_TITLE] |
+| **Logline** | [1 sentence: protagonist + want + obstacle + stakes] |
+| **Genre** | [PRIMARY_GENRE] |
+| **Subgenre** | [SUBGENRE] |
+| **Audience** | [AUDIENCE_LEVEL — reading sophistication] |
+| **Comp Titles** | [2–3 existing books or films with brief notes on what each captures] |
+| **Theme** | [the deeper question — what is this book really about?] |
+| **POV & Tense** | [POV_PREFERENCE, TENSE] |
+| **Target Length** | [word count range] |
+
+---
+
+## Protagonist
+
+- **Name (working):** [name and brief characterization]
+- **Want:** [external goal]
+- **Need:** [internal need — what they must learn or become]
+- **Flaw/Wound:** [what stands in their way internally]
+
+---
+
+## Conflict
+
+- **External:** [the obstacle, antagonist, or situation]
+- **Internal:** [the lie they believe, the fear they carry, the identity they cling to]
+- **Engine:** [the source of sustained tension across the full narrative]
+
+---
+
+## Emotional Arc
+
+- **Opens with:** [the feeling / state the reader enters]
+- **Drives toward:** [the emotional destination]
+- **Ends with:** [the resonance — what lingers after the last page]
+
+---
+
+## Risk Factors
+
+- [potential structural trap]
+- [potential pacing concern]
+- [potential differentiation issue]
+
+---
+
+## Spark's Assessment
+
+| Field | Value |
+|---|---|
+| **Legs** | [strong / moderate / weak — and why] |
+| **Recommended form** | [novel / novella / short / series] |
+| **Confidence** | [high / medium / low] |
+
+**Notes:** [honest assessment in 2–3 sentences]
+```
 
 ### Seeded Voice Profile
 
@@ -364,6 +448,7 @@ my-novel-engine/
     <book>/                         ← Spark scaffolds these
       about.json                    ← Spark creates this
       source/
+        pitch.md                    ← Spark creates this; full pitch document
         voice-profile.md            ← Spark seeds this; Verity completes
         scene-outline.md            ← Spark creates empty template; Verity populates
         story-bible.md              ← Spark seeds this; Verity expands
@@ -376,6 +461,8 @@ my-novel-engine/
 
 | File | Path | Created By | Notes |
 |---|---|---|---|
+| **PITCH.md** | `PITCH.md` | Spark | Spark's own system instructions. Located at repository root. |
+| **pitch.md** | `books/<book>/source/pitch.md` | Spark | Full pitch document with prose overview + structured details. The permanent record of the approved Pitch Card. |
 | **about.json** | `books/<book>/about.json` | Spark | Created during scaffold. Other agents read only. Author may edit directly. |
 | **Pitch Cards** | `books/_pitches/*.md` | Spark | Shelved ideas. No other agent reads these. |
 | **active-book.json** | `active-book.json` | Spark | Created or updated when a project is scaffolded. Other agents read only. |
