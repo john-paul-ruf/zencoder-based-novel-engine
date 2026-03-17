@@ -1,7 +1,6 @@
 {
-  "name": "my-novel-engine",
+  "name": "zendcoder-based-novel-engine",
   "author": "John Ruf",
-  "private": true,
   "type": "module",
   "scripts": {
     "wordcount": "BOOK=${BOOK:-$(node -p \"require('./active-book.json').book\")} && cat books/$BOOK/chapters/[0-9][0-9]-*/draft.md | wc -w",
