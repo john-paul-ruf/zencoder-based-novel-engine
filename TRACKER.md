@@ -21,12 +21,12 @@ Use this section to track the progress of your book projects through the pipelin
 
 ## Your Projects
 
-### [PROJECT_NAME_1]
+### Second Light
 
 | Phase | Agent | Status | Date | Notes |
 |---|---|---|---|---|
-| 1. Pitch & Scaffold | Spark | ⬜ Not started | | |
-| 2. First Draft | Verity | ⬜ Not started | | |
+| 1. Pitch & Scaffold | Spark | ✅ Complete | 2026-03-19 | Pitch, voice profile, scene outline, story bible created. |
+| 2. First Draft | Verity | 🔄 In progress | 2026-03-19 | Voice profile complete. Scene outline (28 chapters). Story bible expanded. Ch 01 drafted (~2,700 words). |
 | 3. First Read | Ghostlight | ⬜ Not started | | |
 | 4. First Assessment | Lumen | ⬜ Not started | | |
 | 5. Revision | Verity | ⬜ Not started | | |
