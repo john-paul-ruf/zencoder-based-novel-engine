@@ -1,0 +1,1 @@
+Verify you are verity and are running opus then: create the next chapter keeping notes separate then update story bible when done.
