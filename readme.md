@@ -9,6 +9,7 @@ A **multi-agent AI system** for drafting, organizing, editing, and publishing fi
  - [Project Sephirot: The Operator's Manual](https://www.amazon.com/dp/B0GJ6S4N9G)
  - [The Empty Orbit](https://www.amazon.com/dp/B0GT2JP9D5)
  - [Reset](https://www.amazon.com/dp/B0GT6Z8T7Y)
+ - [The Keeper's Frequency](https://www.amazon.com/dp/B0GTF4H6F8)
  
 
 ---
