@@ -1,3 +1,6 @@
+#Use Novel Engine Instead
+[Novel Engine](https://github.com/john-paul-ruf/novel-engine)
+
 # Zencoder-Based Novel Engine
 
 A **multi-agent AI system** for drafting, organizing, editing, and publishing fiction manuscripts. This engine uses Zencoder to orchestrate six specialized AI agents that collaborate through a structured pipeline, transforming a spark of creative inspiration into a polished, publication-ready novel.
